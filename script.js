@@ -28,18 +28,27 @@ async function getData(e) {
         owner: el.owner.login,
       })
     );
-    console.log("request done");
   } catch (error) {
     console.log(error);
     isError = true;
   }
 }
 async function addToList(event) {
+  const key = event.keyCode;
   const value = event.target.value;
+  let hotButtons = true;
+  if (key !== 37 && key !== 38 && key !== 39 && key !== 40) {
+    hotButtons = false;
+  }
   let newList = "";
   menuList.classList.remove("menuclose");
-  if (lettersRegex.test(value)) {
+  if (
+    lettersRegex.test(value) &&
+    !hotButtons &&
+    !value.split("").includes(" ")
+  ) {
     await getData(value);
+    console.log("request done");
   } else {
     isError = true;
   }
@@ -57,7 +66,8 @@ async function addToList(event) {
     menuList.classList.add("menuclose");
     setTimeout(() => {
       menuList.classList.remove("open");
-    }, 300);
+    }, 400);
+  } else if (value && hotButtons) {
   } else {
     menuList.classList.remove("open");
     searchfield.classList.add("searchfield-border");
@@ -144,3 +154,4 @@ function debounce(fn, debounceTime) {
 }
 const debounced = debounce(addToList, 400);
 searchfield.addEventListener("keydown", debounced);
+
